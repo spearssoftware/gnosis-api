@@ -15,11 +15,9 @@ spec:
       labels:
         app: gnosis-api
     spec:
-      imagePullSecrets:
-        - name: gitea-registry-creds
       containers:
         - name: gnosis-api
-          image: git.thespears.net/kspears/gnosis-api:latest
+          image: ghcr.io/spearssoftware/gnosis-api:latest
           ports:
             - containerPort: 8000
               protocol: TCP
