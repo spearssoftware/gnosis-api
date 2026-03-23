@@ -7,10 +7,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - api.gnosistool.com
+        - api.gnosistools.com
       secretName: gnosis-api-tls
   rules:
-    - host: api.gnosistool.com
+    - host: api.gnosistools.com
       http:
         paths:
           - path: /
