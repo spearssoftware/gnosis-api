@@ -8,6 +8,7 @@ from fastapi.security import APIKeyHeader
 
 from gnosis_api.config import settings
 from gnosis_api.db import get_keys_db
+from gnosis_api.rate_limit import get_burst_limiter
 
 _api_key_header = APIKeyHeader(name="X-API-Key")
 
@@ -32,6 +33,13 @@ async def require_api_key(
     record = row[0]
     if not record["enabled"]:
         raise HTTPException(status_code=401, detail="API key disabled")
+
+    if not get_burst_limiter().is_allowed(key_hash):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests — slow down",
+            headers={"Retry-After": "1"},
+        )
 
     daily_limit = (
         settings.rate_limit_daily_paid
