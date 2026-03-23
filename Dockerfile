@@ -2,10 +2,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
-RUN pip install --no-cache-dir uv && uv sync --frozen --no-dev
+RUN pip install --no-cache-dir uv
 
+COPY pyproject.toml uv.lock ./
 COPY src/ src/
+RUN uv sync --frozen --no-dev
+
 COPY data/gnosis.db data/gnosis.db
 
 EXPOSE 8000
