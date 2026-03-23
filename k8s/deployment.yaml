@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gnosis-api
+  namespace: gnosis-api
   labels:
     app: gnosis-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gnosis-api
@@ -14,17 +15,17 @@ spec:
       labels:
         app: gnosis-api
     spec:
+      imagePullSecrets:
+        - name: gitea-registry-creds
       containers:
         - name: gnosis-api
-          image: gnosis-api:latest
+          image: git.thespears.net/kspears/gnosis-api:latest
           ports:
             - containerPort: 8000
-          env:
-            - name: GNOSIS_API_KEY_SALT
-              valueFrom:
-                secretKeyRef:
-                  name: gnosis-api-secrets
-                  key: api-key-salt
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: gnosis-api-secret
           resources:
             requests:
               memory: "128Mi"

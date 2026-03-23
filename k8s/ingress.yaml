@@ -2,9 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: gnosis-api
+  namespace: gnosis-api
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    external-dns.alpha.kubernetes.io/target: "50.47.147.161"
 spec:
+  ingressClassName: traefik
   tls:
     - hosts:
         - api.gnosistools.com
