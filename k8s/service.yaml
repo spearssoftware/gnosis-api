@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gnosis-api
+spec:
+  selector:
+    app: gnosis-api
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: ClusterIP

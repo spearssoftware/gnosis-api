@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gnosis-api
+  labels:
+    app: gnosis-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gnosis-api
+  template:
+    metadata:
+      labels:
+        app: gnosis-api
+    spec:
+      containers:
+        - name: gnosis-api
+          image: gnosis-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: GNOSIS_API_KEY_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: gnosis-api-secrets
+                  key: api-key-salt
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
