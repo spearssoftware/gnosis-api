@@ -33,9 +33,20 @@ async def lifespan(app: FastAPI):
 
 
 async def _periodic_cleanup() -> None:
+    import time
+
+    from gnosis_api.db import get_keys_db
+
     while True:
         await asyncio.sleep(300)
         cleanup_limiters()
+        try:
+            db = get_keys_db()
+            cutoff = time.time() - 86400
+            await db.execute("DELETE FROM request_log WHERE timestamp < ?", (cutoff,))
+            await db.commit()
+        except Exception:
+            pass
 
 
 app = FastAPI(

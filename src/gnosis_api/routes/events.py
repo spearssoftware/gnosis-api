@@ -32,13 +32,7 @@ async def _build_event(row: dict) -> EventOut:
             (eid,),
         )
     ]
-    locations = [
-        r["slug"]
-        async for r in await db.execute(
-            "SELECT pl.slug FROM place pl JOIN event_verse ev ON pl.id = ev.event_id WHERE ev.event_id = ?",
-            (eid,),
-        )
-    ]
+    locations = []
     verses = [
         r["osis_ref"]
         async for r in await db.execute(

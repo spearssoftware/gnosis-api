@@ -3,16 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import secrets
 import sqlite3
 from datetime import UTC, datetime
 
 from gnosis_api.config import settings
-
-
-def _hash_key(key: str) -> str:
-    return hashlib.sha256(f"{settings.api_key_salt}:{key}".encode()).hexdigest()
+from gnosis_api.keys import hash_key
 
 
 def _get_db() -> sqlite3.Connection:
@@ -39,7 +35,7 @@ def _get_db() -> sqlite3.Connection:
 
 def create_key(email: str, tier: str = "free") -> str:
     raw_key = f"gn_{secrets.token_urlsafe(32)}"
-    key_hash = _hash_key(raw_key)
+    key_hash = hash_key(raw_key)
 
     db = _get_db()
     db.execute(

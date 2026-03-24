@@ -23,10 +23,8 @@ class SlidingWindowLimiter:
         cutoff = now - self.window_seconds
 
         with self._lock:
-            timestamps = self._timestamps[key]
-            # Prune expired entries
-            self._timestamps[key] = [t for t in timestamps if t > cutoff]
-            timestamps = self._timestamps[key]
+            timestamps = [t for t in self._timestamps[key] if t > cutoff]
+            self._timestamps[key] = timestamps
 
             if len(timestamps) >= self.max_requests:
                 return False
@@ -43,7 +41,7 @@ class SlidingWindowLimiter:
             empty_keys = [
                 k
                 for k, ts in self._timestamps.items()
-                if not ts or ts[-1] <= cutoff
+                if not ts or max(ts) <= cutoff
             ]
             for k in empty_keys:
                 del self._timestamps[k]
