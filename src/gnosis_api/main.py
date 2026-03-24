@@ -12,6 +12,7 @@ from gnosis_api.routes import (
     events,
     groups,
     hebrew,
+    keys,
     lexicon,
     meta,
     people,
@@ -97,6 +98,7 @@ app.include_router(hebrew.router)
 app.include_router(lexicon.router)
 app.include_router(search.router)
 app.include_router(meta.router)
+app.include_router(keys.router)
 
 
 @app.get("/")
