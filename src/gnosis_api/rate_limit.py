@@ -78,3 +78,10 @@ def get_ip_limiter() -> SlidingWindowLimiter:
             window_seconds=settings.rate_limit_ip_window,
         )
     return _ip_limiter
+
+
+def cleanup_limiters() -> None:
+    if _burst_limiter is not None:
+        _burst_limiter.cleanup()
+    if _ip_limiter is not None:
+        _ip_limiter.cleanup()

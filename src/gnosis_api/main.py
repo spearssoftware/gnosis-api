@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -5,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from gnosis_api.db import close_db, init_db
-from gnosis_api.rate_limit import get_ip_limiter
+from gnosis_api.rate_limit import cleanup_limiters, get_ip_limiter
 from gnosis_api.routes import (
     dictionary,
     events,
@@ -25,8 +26,16 @@ from gnosis_api.routes import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    task = asyncio.create_task(_periodic_cleanup())
     yield
+    task.cancel()
     await close_db()
+
+
+async def _periodic_cleanup() -> None:
+    while True:
+        await asyncio.sleep(300)
+        cleanup_limiters()
 
 
 app = FastAPI(
@@ -43,8 +52,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+_SKIP_RATE_LIMIT = {"/", "/docs", "/redoc", "/openapi.json"}
+
+
 @app.middleware("http")
 async def ip_rate_limit_middleware(request: Request, call_next):
+    if request.url.path in _SKIP_RATE_LIMIT:
+        return await call_next(request)
+
     client_ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
     if not client_ip:
         client_ip = request.client.host if request.client else "unknown"
