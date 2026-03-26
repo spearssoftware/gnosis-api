@@ -65,6 +65,7 @@ class VerseEntitiesOut(BaseModel):
     people: list[str] = []
     places: list[str] = []
     events: list[str] = []
+    topics: list[str] = []
 
 
 class CrossReferenceOut(BaseModel):
@@ -121,6 +122,15 @@ class HebrewWordOut(BaseModel):
     morph: str
 
 
+class GreekWordOut(BaseModel):
+    word_id: str
+    position: int
+    text: str
+    lemma: str
+    strongs_number: str | None = None
+    morph: str
+
+
 class LexiconEntryOut(BaseModel):
     lexical_id: str
     uuid: str
@@ -130,6 +140,17 @@ class LexiconEntryOut(BaseModel):
     gloss: str | None = None
     strongs_number: str | None = None
     twot_number: str | None = None
+
+
+class GreekLexiconEntryOut(BaseModel):
+    strongs_number: str
+    uuid: str
+    greek: str
+    transliteration: str | None = None
+    part_of_speech: str | None = None
+    short_gloss: str | None = None
+    long_gloss: str | None = None
+    gk_number: str | None = None
 
 
 class SearchResultOut(BaseModel):

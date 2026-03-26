@@ -14,9 +14,12 @@ async def get_meta(_auth: dict = Depends(require_api_key)):
     meta = {r["key"]: r["value"] for r in await meta_rows.fetchall()}
 
     counts = {}
-    for table in ["person", "place", "event", "people_group", "strongs", "dictionary_entry", "topic", "lexicon_entry", "cross_reference", "hebrew_word"]:
-        row = await db.execute(f"SELECT COUNT(*) as cnt FROM {table}")
-        counts[table] = (await row.fetchone())["cnt"]
+    for table in ["person", "place", "event", "people_group", "strongs", "dictionary_entry", "topic", "lexicon_entry", "cross_reference", "hebrew_word", "greek_word", "greek_lexicon_entry"]:
+        try:
+            row = await db.execute(f"SELECT COUNT(*) as cnt FROM {table}")
+            counts[table] = (await row.fetchone())["cnt"]
+        except Exception:
+            pass
 
     return {
         "data": {

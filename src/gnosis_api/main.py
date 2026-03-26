@@ -10,6 +10,8 @@ from gnosis_api.rate_limit import cleanup_limiters, get_ip_limiter
 from gnosis_api.routes import (
     dictionary,
     events,
+    greek,
+    greek_lexicon,
     groups,
     hebrew,
     keys,
@@ -95,7 +97,9 @@ app.include_router(strongs.router)
 app.include_router(dictionary.router)
 app.include_router(topics.router)
 app.include_router(hebrew.router)
+app.include_router(greek.router)
 app.include_router(lexicon.router)
+app.include_router(greek_lexicon.router)
 app.include_router(search.router)
 app.include_router(meta.router)
 app.include_router(keys.router)

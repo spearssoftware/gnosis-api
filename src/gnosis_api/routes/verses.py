@@ -38,9 +38,16 @@ async def get_verse_entities(osis_ref: str, _auth: dict = Depends(require_api_ke
             (vid,),
         )
     ]
+    topics = [
+        r["slug"]
+        async for r in await db.execute(
+            "SELECT DISTINCT t.slug FROM topic t JOIN topic_aspect ta ON t.id = ta.topic_id JOIN topic_aspect_verse tav ON ta.id = tav.topic_aspect_id WHERE tav.verse_id = ?",
+            (vid,),
+        )
+    ]
 
     return SingleResponse(
-        data=VerseEntitiesOut(osis_ref=osis_ref, people=people, places=places, events=events)
+        data=VerseEntitiesOut(osis_ref=osis_ref, people=people, places=places, events=events, topics=topics)
     )
 
 
