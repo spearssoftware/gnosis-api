@@ -1,3 +1,5 @@
+import sqlite3
+
 from fastapi import APIRouter, Depends
 
 from gnosis_api.auth import require_api_key
@@ -13,10 +15,20 @@ async def get_meta(_auth: dict = Depends(require_api_key)):
     meta_rows = await db.execute("SELECT key, value FROM gnosis_meta")
     meta = {r["key"]: r["value"] for r in await meta_rows.fetchall()}
 
-    counts = {}
-    for table in ["person", "place", "event", "people_group", "strongs", "dictionary_entry", "topic", "lexicon_entry", "cross_reference", "hebrew_word"]:
-        row = await db.execute(f"SELECT COUNT(*) as cnt FROM {table}")
-        counts[table] = (await row.fetchone())["cnt"]
+    tables = ["person", "place", "event", "people_group", "strongs", "dictionary_entry", "topic", "lexicon_entry", "cross_reference", "hebrew_word", "greek_word", "greek_lexicon_entry"]
+    subqueries = ", ".join(f"(SELECT COUNT(*) FROM {t}) as {t}" for t in tables)
+    try:
+        row = await db.execute(f"SELECT {subqueries}")
+        r = await row.fetchone()
+        counts = {t: r[t] for t in tables}
+    except sqlite3.OperationalError:
+        counts = {}
+        for t in tables:
+            try:
+                row = await db.execute(f"SELECT COUNT(*) as cnt FROM {t}")
+                counts[t] = (await row.fetchone())["cnt"]
+            except sqlite3.OperationalError:
+                pass
 
     return {
         "data": {
