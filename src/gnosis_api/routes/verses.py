@@ -17,34 +17,25 @@ async def get_verse_entities(osis_ref: str, _auth: dict = Depends(require_api_ke
 
     vid = verse["id"]
 
-    people = [
-        r["slug"]
-        async for r in await db.execute(
-            "SELECT p.slug FROM person p JOIN person_verse pv ON p.id = pv.person_id WHERE pv.verse_id = ?",
-            (vid,),
-        )
-    ]
-    places = [
-        r["slug"]
-        async for r in await db.execute(
-            "SELECT pl.slug FROM place pl JOIN place_verse plv ON pl.id = plv.place_id WHERE plv.verse_id = ?",
-            (vid,),
-        )
-    ]
-    events = [
-        r["slug"]
-        async for r in await db.execute(
-            "SELECT e.slug FROM event e JOIN event_verse ev ON e.id = ev.event_id WHERE ev.verse_id = ?",
-            (vid,),
-        )
-    ]
-    topics = [
-        r["slug"]
-        async for r in await db.execute(
-            "SELECT DISTINCT t.slug FROM topic t JOIN topic_aspect ta ON t.id = ta.topic_id JOIN topic_aspect_verse tav ON ta.id = tav.topic_aspect_id WHERE tav.verse_id = ?",
-            (vid,),
-        )
-    ]
+    rows = await db.execute(
+        """
+        SELECT 'person' as kind, p.slug FROM person p JOIN person_verse pv ON p.id = pv.person_id WHERE pv.verse_id = ?
+        UNION ALL
+        SELECT 'place', pl.slug FROM place pl JOIN place_verse plv ON pl.id = plv.place_id WHERE plv.verse_id = ?
+        UNION ALL
+        SELECT 'event', e.slug FROM event e JOIN event_verse ev ON e.id = ev.event_id WHERE ev.verse_id = ?
+        UNION ALL
+        SELECT 'topic', t.slug FROM topic t JOIN topic_aspect ta ON t.id = ta.topic_id JOIN topic_aspect_verse tav ON ta.id = tav.topic_aspect_id WHERE tav.verse_id = ? GROUP BY t.slug
+        """,
+        (vid, vid, vid, vid),
+    )
+    people: list[str] = []
+    places: list[str] = []
+    events: list[str] = []
+    topics: list[str] = []
+    buckets = {"person": people, "place": places, "event": events, "topic": topics}
+    for r in await rows.fetchall():
+        buckets[r["kind"]].append(r["slug"])
 
     return SingleResponse(
         data=VerseEntitiesOut(osis_ref=osis_ref, people=people, places=places, events=events, topics=topics)
