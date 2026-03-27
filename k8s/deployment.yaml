@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: gnosis-api
-          image: ghcr.io/spearssoftware/gnosis-api:sha-4ce17c7d37a50f9cf4ad4f5ed29c60df7ad55e04
+          image: ghcr.io/spearssoftware/gnosis-api:sha-47c8b95143f71f54ee0d899092664b7310e89393
           ports:
             - containerPort: 8000
               protocol: TCP
