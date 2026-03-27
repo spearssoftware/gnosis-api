@@ -20,6 +20,7 @@ from gnosis_api.routes import (
     people,
     places,
     search,
+    semantic_search,
     strongs,
     topics,
     verses,
@@ -101,6 +102,7 @@ app.include_router(greek.router)
 app.include_router(lexicon.router)
 app.include_router(greek_lexicon.router)
 app.include_router(search.router)
+app.include_router(semantic_search.router)
 app.include_router(meta.router)
 app.include_router(keys.router)
 
