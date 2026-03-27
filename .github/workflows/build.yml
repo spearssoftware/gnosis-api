@@ -19,6 +19,7 @@ jobs:
         run: |
           mkdir -p data
           gh release download --repo spearssoftware/gnosis --pattern gnosis.db --dir data
+          gh release download --repo spearssoftware/gnosis --pattern gnosis.usearch --dir data
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
