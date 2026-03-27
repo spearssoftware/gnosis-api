@@ -115,3 +115,42 @@ app.include_router(keys.router)
 @app.get("/")
 async def root():
     return {"message": "Gnosis API", "docs": "/docs"}
+
+
+@app.get("/health")
+async def health():
+    checks: dict[str, str] = {}
+
+    try:
+        from gnosis_api.db import get_gnosis_db
+
+        db = get_gnosis_db()
+        await db.execute("SELECT 1")
+        checks["gnosis_db"] = "ok"
+    except Exception as exc:
+        checks["gnosis_db"] = "error"
+
+    try:
+        from gnosis_api.db import get_keys_db
+
+        db = get_keys_db()
+        await db.execute("SELECT 1")
+        checks["keys_db"] = "ok"
+    except Exception as exc:
+        checks["keys_db"] = "error"
+
+    try:
+        from gnosis_api.embedding import _index, _model
+
+        checks["embedding_model"] = "ok" if _model is not None else "not loaded"
+        checks["search_index"] = "ok" if _index is not None else "not loaded"
+    except Exception:
+        checks["embedding_model"] = "error"
+        checks["search_index"] = "error"
+
+    healthy = all(v == "ok" for v in checks.values())
+    status_code = 200 if healthy else 503
+    return JSONResponse(
+        status_code=status_code,
+        content={"status": "healthy" if healthy else "unhealthy", "checks": checks},
+    )
