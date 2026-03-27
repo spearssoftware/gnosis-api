@@ -12,6 +12,11 @@ _model: SentenceTransformer | None = None
 _index: Index | None = None
 
 
+def load_model_and_index() -> None:
+    get_model()
+    get_index()
+
+
 def get_model() -> SentenceTransformer:
     global _model
     if _model is None:

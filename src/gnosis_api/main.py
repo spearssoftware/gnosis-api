@@ -30,6 +30,11 @@ from gnosis_api.routes import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+
+    from gnosis_api.embedding import load_model_and_index
+
+    load_model_and_index()
+
     task = asyncio.create_task(_periodic_cleanup())
     yield
     task.cancel()
