@@ -158,3 +158,10 @@ class SearchResultOut(BaseModel):
     name: str
     entity_type: str
     uuid: str
+
+
+class SemanticSearchResultOut(BaseModel):
+    slug: str
+    type: str
+    text: str
+    score: float

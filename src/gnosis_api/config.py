@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     gnosis_db_path: Path = Path("data/gnosis.db")
     keys_db_path: Path = Path("data/keys.db")
+    usearch_index_path: Path = Path("data/gnosis.usearch")
     api_key_salt: str = "gnosis-default-salt-change-me"
     rate_limit_daily: int = 1000
     rate_limit_daily_paid: int = 10000
