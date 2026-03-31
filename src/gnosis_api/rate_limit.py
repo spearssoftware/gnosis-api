@@ -18,15 +18,16 @@ class SlidingWindowLimiter:
         self._timestamps: dict[str, list[float]] = defaultdict(list)
         self._lock = Lock()
 
-    def is_allowed(self, key: str) -> bool:
+    def is_allowed(self, key: str, max_requests: int | None = None) -> bool:
         now = time.monotonic()
         cutoff = now - self.window_seconds
+        limit = max_requests if max_requests is not None else self.max_requests
 
         with self._lock:
             timestamps = [t for t in self._timestamps[key] if t > cutoff]
             self._timestamps[key] = timestamps
 
-            if len(timestamps) >= self.max_requests:
+            if len(timestamps) >= limit:
                 return False
 
             timestamps.append(now)

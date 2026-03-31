@@ -27,13 +27,6 @@ async def require_api_key(
 ) -> ApiKeyContext:
     key_hash = hash_key(api_key)
 
-    if not get_burst_limiter().is_allowed(key_hash):
-        raise HTTPException(
-            status_code=429,
-            detail="Too many requests — slow down",
-            headers={"Retry-After": "1"},
-        )
-
     db = get_keys_db()
     row = await db.execute_fetchall(
         "SELECT key_hash, email, tier, enabled FROM api_key WHERE key_hash = ?",
@@ -46,12 +39,17 @@ async def require_api_key(
     if not record["enabled"]:
         raise HTTPException(status_code=401, detail="API key disabled")
 
+    is_paid = record["tier"] == "paid"
+    burst_limit = settings.rate_limit_burst_paid if is_paid else settings.rate_limit_burst
+    if not get_burst_limiter().is_allowed(key_hash, max_requests=burst_limit):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests — slow down",
+            headers={"Retry-After": "1"},
+        )
+
     now = time.time()
-    daily_limit = (
-        settings.rate_limit_daily_paid
-        if record["tier"] == "paid"
-        else settings.rate_limit_daily
-    )
+    daily_limit = settings.rate_limit_daily_paid if is_paid else settings.rate_limit_daily
     cutoff = now - 86400
     count_row = await db.execute_fetchall(
         "SELECT COUNT(*) as cnt FROM request_log WHERE key_hash = ? AND timestamp > ?",
