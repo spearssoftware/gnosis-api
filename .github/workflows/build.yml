@@ -1,12 +1,12 @@
 name: Build and Push
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 jobs:
@@ -36,18 +36,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/spearssoftware/gnosis-api:sha-${{ github.sha }}
+            ghcr.io/spearssoftware/gnosis-api:${{ github.event.release.tag_name || 'latest' }}
             ghcr.io/spearssoftware/gnosis-api:latest
-
-      - name: Update deployment manifest with new image tag
-        run: |
-          sed -i "s|image: ghcr.io/spearssoftware/gnosis-api:.*|image: ghcr.io/spearssoftware/gnosis-api:sha-${{ github.sha }}|" k8s/deployment.yaml
-
-      - name: Commit and push updated manifest
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/deployment.yaml
-          git diff --cached --quiet && exit 0
-          git commit -m "Update image tag to sha-${{ github.sha }}"
-          git push
