@@ -73,7 +73,7 @@ async def test_search(client: AsyncClient, api_key: str):
     body = resp.json()
     assert "data" in body
     if body["data"]:
-        assert body["data"][0]["entity_type"] in ("person", "place", "event", "group", "dictionary", "topic")
+        assert body["data"][0]["entityType"] in ("person", "place", "event", "group", "dictionary", "topic")
 
 
 async def test_meta(client: AsyncClient, api_key: str):

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from .common import CamelModel
 
 
-class PersonOut(BaseModel):
+class PersonOut(CamelModel):
     slug: str
     uuid: str
     name: str
@@ -28,7 +28,7 @@ class PersonOut(BaseModel):
     people_groups: list[str] = []
 
 
-class PlaceOut(BaseModel):
+class PlaceOut(CamelModel):
     slug: str
     uuid: str
     name: str
@@ -42,7 +42,7 @@ class PlaceOut(BaseModel):
     modern_name: str | None = None
 
 
-class EventOut(BaseModel):
+class EventOut(CamelModel):
     slug: str
     uuid: str
     title: str
@@ -57,14 +57,14 @@ class EventOut(BaseModel):
     predecessor: str | None = None
 
 
-class PeopleGroupOut(BaseModel):
+class PeopleGroupOut(CamelModel):
     slug: str
     uuid: str
     name: str
     members: list[str] = []
 
 
-class VerseEntitiesOut(BaseModel):
+class VerseEntitiesOut(CamelModel):
     osis_ref: str
     people: list[str] = []
     places: list[str] = []
@@ -72,14 +72,14 @@ class VerseEntitiesOut(BaseModel):
     topics: list[str] = []
 
 
-class CrossReferenceOut(BaseModel):
+class CrossReferenceOut(CamelModel):
     from_verse: str
     to_verse_start: str
     to_verse_end: str | None = None
     votes: int = 0
 
 
-class StrongsEntryOut(BaseModel):
+class StrongsEntryOut(CamelModel):
     number: str
     uuid: str
     language: str
@@ -90,12 +90,12 @@ class StrongsEntryOut(BaseModel):
     kjv_usage: str | None = None
 
 
-class DictionaryDefinitionOut(BaseModel):
+class DictionaryDefinitionOut(CamelModel):
     source: str
     text: str
 
 
-class DictionaryEntryOut(BaseModel):
+class DictionaryEntryOut(CamelModel):
     slug: str
     uuid: str
     name: str
@@ -103,13 +103,13 @@ class DictionaryEntryOut(BaseModel):
     scripture_refs: list[str] = []
 
 
-class TopicAspectOut(BaseModel):
+class TopicAspectOut(CamelModel):
     label: str | None = None
     source: str | None = None
     verses: list[str] = []
 
 
-class TopicOut(BaseModel):
+class TopicOut(CamelModel):
     slug: str
     uuid: str
     name: str
@@ -117,7 +117,7 @@ class TopicOut(BaseModel):
     see_also: list[str] = []
 
 
-class HebrewWordOut(BaseModel):
+class HebrewWordOut(CamelModel):
     word_id: str
     position: int
     text: str
@@ -126,7 +126,7 @@ class HebrewWordOut(BaseModel):
     morph: str
 
 
-class GreekWordOut(BaseModel):
+class GreekWordOut(CamelModel):
     word_id: str
     position: int
     text: str
@@ -135,7 +135,7 @@ class GreekWordOut(BaseModel):
     morph: str
 
 
-class LexiconEntryOut(BaseModel):
+class LexiconEntryOut(CamelModel):
     lexical_id: str
     uuid: str
     hebrew: str
@@ -146,7 +146,7 @@ class LexiconEntryOut(BaseModel):
     twot_number: str | None = None
 
 
-class GreekLexiconEntryOut(BaseModel):
+class GreekLexiconEntryOut(CamelModel):
     strongs_number: str
     uuid: str
     greek: str
@@ -157,21 +157,21 @@ class GreekLexiconEntryOut(BaseModel):
     gk_number: str | None = None
 
 
-class SearchResultOut(BaseModel):
+class SearchResultOut(CamelModel):
     slug: str
     name: str
     entity_type: str
     uuid: str
 
 
-class SemanticSearchResultOut(BaseModel):
+class SemanticSearchResultOut(CamelModel):
     slug: str
     type: str
     text: str
     score: float
 
 
-class ChapterEntitiesOut(BaseModel):
+class ChapterEntitiesOut(CamelModel):
     book: str
     chapter: int
     people: list[str] = []
