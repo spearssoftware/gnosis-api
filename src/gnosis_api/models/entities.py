@@ -169,3 +169,12 @@ class SemanticSearchResultOut(BaseModel):
     type: str
     text: str
     score: float
+
+
+class ChapterEntitiesOut(BaseModel):
+    book: str
+    chapter: int
+    people: list[str] = []
+    places: list[str] = []
+    events: list[str] = []
+    topics: list[str] = []

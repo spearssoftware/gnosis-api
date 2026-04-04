@@ -90,3 +90,20 @@ async def test_usage(client: AsyncClient, api_key: str):
     data = resp.json()["data"]
     assert data["tier"] == "free"
     assert data["daily_used"] >= 1
+
+
+async def test_chapter_entities(client: AsyncClient, api_key: str):
+    resp = await client.get("/v1/chapters/Gen/1", headers={"X-API-Key": api_key})
+    assert resp.status_code == 200
+    body = resp.json()["data"]
+    assert body["book"] == "Gen"
+    assert body["chapter"] == 1
+    assert isinstance(body["people"], list)
+    assert isinstance(body["places"], list)
+    assert isinstance(body["events"], list)
+    assert isinstance(body["topics"], list)
+
+
+async def test_chapter_not_found(client: AsyncClient, api_key: str):
+    resp = await client.get("/v1/chapters/FakeBook/999", headers={"X-API-Key": api_key})
+    assert resp.status_code == 404
