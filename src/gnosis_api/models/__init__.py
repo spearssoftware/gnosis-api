@@ -1,5 +1,6 @@
 from gnosis_api.models.common import ListMeta, ListResponse, SingleResponse
 from gnosis_api.models.entities import (
+    ChapterEntitiesOut,
     CrossReferenceOut,
     DictionaryDefinitionOut,
     DictionaryEntryOut,
@@ -20,6 +21,7 @@ from gnosis_api.models.entities import (
 )
 
 __all__ = [
+    "ChapterEntitiesOut",
     "CrossReferenceOut",
     "DictionaryDefinitionOut",
     "DictionaryEntryOut",

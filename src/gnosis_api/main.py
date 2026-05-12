@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from gnosis_api.db import close_db, init_db
 from gnosis_api.rate_limit import cleanup_limiters, get_ip_limiter
 from gnosis_api.routes import (
+    chapters,
     dictionary,
     events,
     greek,
@@ -94,6 +95,7 @@ async def ip_rate_limit_middleware(request: Request, call_next):
     return await call_next(request)
 
 
+app.include_router(chapters.router)
 app.include_router(people.router)
 app.include_router(places.router)
 app.include_router(events.router)
